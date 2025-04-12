@@ -1198,7 +1198,6 @@ ul {
     .contact-content, .order-item-info {
         word-wrap: break-word;
         overflow-wrap: break-word;
-        padding: 0 15px;
     }
     
     .signature {
