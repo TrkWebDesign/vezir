@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="slike/logo/logo.png">
+    <title>Vezir | Restoran Bihać</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .logo-image {
+            width: auto;
+            height: 80px;
+            margin-bottom: 5px;
+            vertical-align: middle;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .logo span {
+            font-size: 0.8em;
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .map-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensures rounded corners apply to iframe */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex: 1;
+    margin-left: 0;
+    position: relative;
+    left: 100px;
+}
+
+.map-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.map-container h4 {
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+/* Map iframe styling */
+.map-container iframe {
+    width: 100%;
+    height: 350px; /* Fixed height for consistency */
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    filter: grayscale(20%); /* Subtle effect */
+    transition: filter 0.3s ease;
+}
+
+.map-container iframe:hover {
+    filter: grayscale(0%);
+}
+
+.map-address {
+    text-align: center;
+    padding: 0 10px;
+}
+
+.map-address p {
+    margin-bottom: 15px;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.directions-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 25px;
+    background: #eca474;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 10px rgba(236, 164, 116, 0.3);
+}
+
+.directions-btn:hover {
+    background: #d19162;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(236, 164, 116, 0.4);
+}
+
+.directions-btn i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+        /* Added styles for Show More/Less functionality */
+        .hidden-item {
+            display: none;
+        }
+
+        .show-more-btn,
+        .show-less-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #eca474;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .show-more-btn:hover,
+        .show-less-btn:hover {
+            background-color: #b8815c;
+        }
+
+        .show-less-btn {
+            display: none;
+        }
+
+        /* Hide show more button when not needed */
+        .no-more-items .show-more-btn {
+            display: none;
+        }
+
+        /* Loading styles */
+        .loading-square {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255); /* Slightly more opaque */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Ensure it covers all content */
+            opacity: 1; /* Initial opacity */
+            transition: opacity 1s ease; /* Add fade-out transition */
+        }
+
+        .spinner {
+    width: 50px;
+    height: 50px;
+    animation: spin 1.5s linear infinite;
+}
+
+.spinner svg {
+    width: 100%;
+    height: 100%;
+}
+
+.spinner circle {
+    fill: none;
+    stroke: #eca474;
+    stroke-width: 4;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 80;
+    animation: dash 2s ease infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+    0%, 100% { stroke-dashoffset: 80; }
+    50% { stroke-dashoffset: 20; }
+}
+
+        /* New styles for the image frame */
+        .about-image {
+            width: 100%; /* Ensure full width before limiting in the container */
+            margin-top: 20px; /* Spacing above the image */
+        }
+
+        .image-frame {
+            border: 4px solid #eca474; /* Custom border color */
+            border-radius: 8px; /* Rounded corners */
+            overflow: hidden; /* Clip overflow */
+            display: inline-block; /* Allows for more styling */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
+        }
+
+        .image-frame img {
+            width: 100%; /* Responsive image */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Removes bottom space */
+        }
+
+        /* Flexbox styling for better layout */
+        .about-content {
+            display: flex;
+            flex-direction: row; /* Align items in a row */
+            justify-content: space-between; /* Space between text and image */
+            align-items: center; /* Align vertically to center */
+        }
+
+        /* Responsive design considerations */
+        @media (max-width: 768px) {
+            .about-content {
+                flex-direction: column; /* Stack on smaller screens */
+                text-align: center; /* Center text */
+            }
+
+            .image-frame {
+                margin-top: 20px; /* Add spacing for stacked view */
+                width: 100%; /* Full width for images */
+            }
+        }
+
+        .contact-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.contact-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.divider-line {
+    height: 100px;
+    width: 2px;
+    background: #eca474;
+    opacity: 0.5;
+}
+
+.divider-icon {
+    width: 40px;
+    height: 40px;
+    margin: 10px 0;
+    opacity: 0.8;
+}
+
+/* Order Section Styles */
+.order-section {
+    padding: 60px 0;
+    background-color: #f9f5f1;
+}
+
+.order-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.order-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    font-size: 2rem;
+}
+
+.order-content {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.order-menu {
+    flex: 2;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.order-cart {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 140px;
+    overflow-y: auto;
+    margin-left: 0;
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    height: fit-content;
+    margin-top: 0;
+}
+
+.order-cart.sticky-scroll {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.order-category {
+    margin-bottom: 40px;
+}
+
+.order-category h4 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eca474;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.order-item-info {
+    flex: 1;
+}
+
+.order-item-name {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.order-item-desc {
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.order-item-price {
+    color: #eca474;
+    font-weight: 600;
+}
+
+.order-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #eca474;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-btn:hover {
+    background: #d19162;
+}
+
+.quantity-input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.add-to-cart {
+    background: #eca474;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.add-to-cart:hover {
+    background: #d19162;
+}
+
+.cart-title {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eca474;
+}
+
+.cart-items {
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item-name {
+    flex: 1;
+}
+
+.cart-item-price {
+    color: #eca474;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.cart-item-quantity {
+    color: #777;
+    font-size: 0.9em;
+}
+
+.remove-item {
+    color: #ff6b6b;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.cart-total {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 2px solid #eca474;
+    display: flex;
+    justify-content: space-between;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 12px;
+    background: #eca474;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.checkout-btn:hover {
+    background: #d19162;
+}
+
+.checkout-form {
+    display: none;
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.payment-note {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.empty-cart {
+    text-align: center;
+    color: #777;
+    padding: 20px 0;
+}
+
+/* Success message */
+.order-success {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background: #f0f9f0;
+    border-radius: 8px;
+    margin-top: 20px;
+    color: #2e7d32;
+}
+
+.order-success i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #4caf50;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .order-content {
+        position: static;
+        margin-top: 30px;
+        flex-direction: column;
+    }
+    
+    .order-cart {
+        margin-top: 30px;
+    }
+}
+
+.cancel-order {
+    padding: 12px 25px;
+    background: #f5f5f5;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.cancel-order:hover {
+    background: #e0e0e0;
+    border-color: #ccc;
+}
+
+.submit-order {
+    padding: 12px 25px;
+    background: #d19162;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.submit-order:hover {
+    background: #b87f56;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+@media (max-width: 1200px) {
+        .order-content {
+            flex-direction: column;
+        }
+        .order-cart {
+            margin-left: 0;
+            margin-top: 30px;
+        }
+        .map-container {
+            left: 0;
+            margin-top: 20px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hero-content h2 {
+            font-size: 2.5rem;
+        }
+        .hero-content p {
+            font-size: 1.2rem;
+        }
+        .about-content {
+            flex-direction: column;
+            text-align: center;
+        }
+        .image-frame {
+            margin-top: 30px;
+            max-width: 100%;
+        }
+        .contact-content {
+            flex-direction: column;
+        }
+        .contact-divider {
+            flex-direction: row;
+            margin: 30px 0;
+        }
+        .divider-line {
+            width: 100px;
+            height: 2px;
+        }
+        .divider-icon {
+            margin: 0 20px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar .nav-links {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        .navbar .nav-links.active {
+            display: flex;
+        }
+        .navbar .nav-links li {
+            margin: 10px 0;
+        }
+        .hamburger {
+            display: flex;
+        }
+        .menu-tabs {
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            margin-bottom: 10px;
+        }
+        .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .footer-content {
+            flex-direction: column;
+            text-align: center;
+        }
+        .footer-links ul {
+            justify-content: center;
+            margin: 20px 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-content h2 {
+            font-size: 2rem;
+        }
+        .hero-content p {
+            font-size: 1rem;
+        }
+        .logo-image {
+            height: 60px;
+        }
+        .logo h1 {
+            font-size: 1.2rem;
+        }
+        .section-title {
+            font-size: 1.8rem;
+        }
+        .menu-item {
+            padding: 15px 10px;
+        }
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+        .order-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .order-item-controls {
+            margin-top: 10px;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+        .cancel-order, .submit-order {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .hero-content h2 {
+            font-size: 1.8rem;
+        }
+        .menu-tabs {
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+        .order-item-name {
+            font-size: 1rem;
+        }
+        .order-item-price {
+            font-size: 0.9rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading-square">
+        <div class="spinner">
+            <svg viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20"></circle>
+            </svg>
+        </div>
+        <p>Učitavanje, molimo sačekajte...</p>
+    </div> <!-- Loading square -->
+
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <div class="logo-container">
+                        <img src="slike/logo.png" alt="Vezir Logo" class="logo-image">
+                        <span>Restoran Bihać</span>
+                    </div>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Početna stranica</a></li>
+                    <li><a href="#about">O nama</a></li>
+                    <li><a href="#menu">Meni</a></li>
+                    <li><a href="#order">Naručite online</a></li> <!-- New link -->
+                    <li><a href="#gallery">Galerija</a></li>
+                    <li><a href="#contact">Kontaktirajte nas</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2>Doživite kulinarsko savršenstvo</h2>
+            <p>Tradicionalna bosanska kuhinja sa modernim tehnikama</p>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h3 class="section-title">Naša priča</h3>
+                    <p>Restoran Vezir donosi bogatu kulinarsku tradiciju Bosne i Hercegovine u srce Bihaća. Naši kuhari kombinuju provjerene recepte sa savremenim tehnikama kako bi stvorili nezaboravna iskustva u objedovanju.</p>
+                    <p>Nazvani po plemićkoj tituli „Vezir", nastojimo da svim našim gostima pružimo kraljevski tretman kroz izuzetnu uslugu, ambijent i što je najvažnije hranu.</p>
+                    <div class="signature">
+                        <img src="slike/signature (14).png" class="signature-img">
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="image-frame">
+                        <img src="slike/vezirsavana.jpg" alt="Restaurant Chef">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="menu-section">
+        <div class="container">
+            <h3 class="section-title">Meni</h3>
+            <div class="menu-tabs">
+                <button class="tab-btn active" data-tab="rostilj">Roštilj</button>
+                <button class="tab-btn" data-tab="sendvici">Sendviči</button>
+                <button class="tab-btn" data-tab="supe">Supe i čorbe</button>
+                <button class="tab-btn" data-tab="prilozi">Prilozi</button>
+                <button class="tab-btn" data-tab="pica">Pića</button>
+            </div>
+            <div class="menu-content">
+                <div class="menu-category active" id="rostilj">
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Ćevapi</h4>
+                            <span class="price">12 KM</span>
+                        </div>
+                        <p>5 komada domaćih ćevapa sa lukom i somunom</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Pljeskavica</h4>
+                            <span class="price">14 KM</span>
+                        </div>
+                        <p>Domaća pljeskavica sa somunom i prilozima</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Pileći ražnjići (mala porcija)</h4>
+                            <span class="price">6 KM</span>
+                        </div>
+                        <p>Sočni pileći ražnjići pripremljeni na roštilju sa začinima</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Pileći ražnjići (velika porcija)</h4>
+                            <span class="price">8 KM</span>
+                        </div>
+                        <p>Veća porcija pilećih ražnjića sa roštilja</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Teleći ražnjići (mala porcija)</h4>
+                            <span class="price">8 KM</span>
+                        </div>
+                        <p>Nježni teleći ražnjići sa mješavinom začina</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Teleći ražnjići (velika porcija)</h4>
+                            <span class="price">10 KM</span>
+                        </div>
+                        <p>Obilna porcija telećih ražnjića sa roštilja</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Teleći roleri</h4>
+                            <span class="price">10 KM</span>
+                        </div>
+                        <p>Teleći roleri punjeni povrćem i začinima</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Teleće kriške</h4>
+                            <span class="price">10 KM</span>
+                        </div>
+                        <p>Sočne teleće kriške sa roštilja</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Pileći file (mala porcija)</h4>
+                            <span class="price">4 KM</span>
+                        </div>
+                        <p>Pileći file pripremljen na roštilju</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Pileći file (velika porcija)</h4>
+                            <span class="price">6 KM</span>
+                        </div>
+                        <p>Veća porcija pilećeg filea sa roštilja</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Riba (mala porcija)</h4>
+                            <span class="price">7.50 KM</span>
+                        </div>
+                        <p>Sveža riba pripremljena na roštilju</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Riba (velika porcija)</h4>
+                            <span class="price">14 KM</span>
+                        </div>
+                        <p>Veća porcija sveže ribe sa roštilja</p>
+                    </div>
+                    <button class="show-more-btn">Prikaži više</button>
+                    <button class="show-less-btn">Prikaži manje</button>
+                </div>
+
+                <div class="menu-category" id="sendvici">
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Hamburger</h4>
+                            <span class="price">2 KM</span>
+                        </div>
+                        <p>Klasični hamburger sa svežim mesom i prilozima</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Cheeseburger</h4>
+                            <span class="price">2.50 KM</span>
+                        </div>
+                        <p>Hamburger sa dodatkom topljenog sira</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Chicken nuggets (mala porcija)</h4>
+                            <span class="price">3 KM</span>
+                        </div>
+                        <p>Hrskavi pileći nuggetsi sa prilogom</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Chicken nuggets (velika porcija)</h4>
+                            <span class="price">5 KM</span>
+                        </div>
+                        <p>Veća porcija pilećih nuggetsa</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Punjena pljeskavica</h4>
+                            <span class="price">8 KM</span>
+                        </div>
+                        <p>Pljeskavica punjena sirom i šunkom</p>
+                    </div>
+                    <button class="show-more-btn">Prikaži više</button>
+                    <button class="show-less-btn">Prikaži manje</button>
+                </div>
+
+                <div class="menu-category" id="supe">
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Begova čorba</h4>
+                            <span class="price">8 KM</span>
+                        </div>
+                        <p>Autentična bosanska piletina sa povrćem i okrom</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Goveđa supa</h4>
+                            <span class="price">6 KM</span>
+                        </div>
+                        <p>Bogata supa od goveđeg mesa sa povrćem</p>
+                    </div>
+                    <button class="show-more-btn" style="display: none;">Prikaži više</button>
+                    <button class="show-less-btn" style="display: none;">Prikaži manje</button>
+                </div>
+
+                <div class="menu-category" id="prilozi">
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Pomfrit</h4>
+                            <span class="price">1 KM</span>
+                        </div>
+                        <p>Hrskavi prženi krompirići</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Dodatna lepinja</h4>
+                            <span class="price">1 KM</span>
+                        </div>
+                        <p>Dodatni komad sveže domaće lepinje</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Pečeni krompir</h4>
+                            <span class="price">3 KM</span>
+                        </div>
+                        <p>Krompir pečen u rerni sa začinima</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Pire krompir</h4>
+                            <span class="price">5 KM</span>
+                        </div>
+                        <p>Kremasti pire od krompira sa puterom</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Riža</h4>
+                            <span class="price">1.70 KM</span>
+                        </div>
+                        <p>Domaća riža kuvana na bosanski način</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Majonez, Senf, Kečap</h4>
+                            <span class="price">0.50 KM</span>
+                        </div>
+                        <p>Dodatni sos po izboru</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Ajvar, Kajmak</h4>
+                            <span class="price">1 KM</span>
+                        </div>
+                        <p>Tradicionalni bosanski dodaci</p>
+                    </div>
+                    <button class="show-more-btn">Prikaži više</button>
+                    <button class="show-less-btn">Prikaži manje</button>
+                </div>
+
+                <div class="menu-category" id="pica">
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Pivo (0.5l)</h4>
+                            <span class="price">3 KM</span>
+                        </div>
+                        <p>Točeno pivo u velikoj čaši</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Pivo (0.33l)</h4>
+                            <span class="price">3.50 KM</span>
+                        </div>
+                        <p>Pivo u flašici</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <h4>Voda (0.5l)</h4>
+                            <span class="price">1 KM</span>
+                        </div>
+                        <p>Mineralna voda</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Gazirana voda (0.33l)</h4>
+                            <span class="price">2 KM</span>
+                        </div>
+                        <p>Gazirana mineralna voda</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Sok (0.33l)</h4>
+                            <span class="price">3 KM</span>
+                        </div>
+                        <p>Voćni sok u flašici</p>
+                    </div>
+                    <div class="menu-item hidden-item">
+                        <div class="item-header">
+                            <h4>Bosanska kafa</h4>
+                            <span class="price">3 KM</span>
+                        </div>
+                        <p>Tradicionalna bosanska kafa sa rahat lokumom</p>
+                    </div>
+                    <button class="show-more-btn">Prikaži više</button>
+                    <button class="show-less-btn">Prikaži manje</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- New Order Section -->
+    <section id="order" class="order-section">
+        <div class="container">
+            <h3 class="section-title">Naručite online</h3>
+            <div class="order-content">
+                <div class="order-menu">
+                    <div class="order-category">
+                        <h4>Roštilj</h4>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Ćevapi</div>
+                                <div class="order-item-desc">5 komada domaćih ćevapa sa lukom i somunom</div>
+                                <div class="order-item-price">12 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="cevapi">-</button>
+                                <input type="number" class="quantity-input" data-item="cevapi" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="cevapi">+</button>
+                                <button class="add-to-cart" data-item='{"id":"cevapi","name":"Ćevapi","price":12}'>Dodaj</button>
+                            </div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Pljeskavica</div>
+                                <div class="order-item-desc">Domaća pljeskavica sa somunom i prilozima</div>
+                                <div class="order-item-price">14 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="pljeskavica">-</button>
+                                <input type="number" class="quantity-input" data-item="pljeskavica" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="pljeskavica">+</button>
+                                <button class="add-to-cart" data-item='{"id":"pljeskavica","name":"Pljeskavica","price":14}'>Dodaj</button>
+                            </div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Pileći ražnjići (mala porcija)</div>
+                                <div class="order-item-desc">Sočni pileći ražnjići pripremljeni na roštilju sa začinima</div>
+                                <div class="order-item-price">6 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="piletina-mala">-</button>
+                                <input type="number" class="quantity-input" data-item="piletina-mala" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="piletina-mala">+</button>
+                                <button class="add-to-cart" data-item='{"id":"piletina-mala","name":"Pileći ražnjići (mala porcija)","price":6}'>Dodaj</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-category">
+                        <h4>Prilozi</h4>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Pomfrit</div>
+                                <div class="order-item-desc">Hrskavi prženi krompirići</div>
+                                <div class="order-item-price">1 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="pomfrit">-</button>
+                                <input type="number" class="quantity-input" data-item="pomfrit" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="pomfrit">+</button>
+                                <button class="add-to-cart" data-item='{"id":"pomfrit","name":"Pomfrit","price":1}'>Dodaj</button>
+                            </div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Dodatna lepinja</div>
+                                <div class="order-item-desc">Dodatni komad sveže domaće lepinje</div>
+                                <div class="order-item-price">1 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="lepinja">-</button>
+                                <input type="number" class="quantity-input" data-item="lepinja" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="lepinja">+</button>
+                                <button class="add-to-cart" data-item='{"id":"lepinja","name":"Dodatna lepinja","price":1}'>Dodaj</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-category">
+                        <h4>Pića</h4>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Pivo (0.5l)</div>
+                                <div class="order-item-desc">Točeno pivo u velikoj čaši</div>
+                                <div class="order-item-price">3 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="pivo-05">-</button>
+                                <input type="number" class="quantity-input" data-item="pivo-05" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="pivo-05">+</button>
+                                <button class="add-to-cart" data-item='{"id":"pivo-05","name":"Pivo (0.5l)","price":3}'>Dodaj</button>
+                            </div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">Voda (0.5l)</div>
+                                <div class="order-item-desc">Mineralna voda</div>
+                                <div class="order-item-price">1 KM</div>
+                            </div>
+                            <div class="order-item-controls">
+                                <button class="quantity-btn minus" data-item="voda">-</button>
+                                <input type="number" class="quantity-input" data-item="voda" value="0" min="0">
+                                <button class="quantity-btn plus" data-item="voda">+</button>
+                                <button class="add-to-cart" data-item='{"id":"voda","name":"Voda (0.5l)","price":1}'>Dodaj</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-cart">
+                    <h4 class="cart-title">Vaša narudžba</h4>
+                    <div class="cart-items">
+                        <div class="empty-cart">Vaša korpa je prazna</div>
+                    </div>
+                    <div class="cart-total">
+                        <span>Ukupno:</span>
+                        <span class="total-amount">0 KM</span>
+                    </div>
+                    <button class="checkout-btn">Naručite</button>
+                    
+                    <div class="checkout-form">
+                        <h4>Podaci za narudžbu</h4>
+                        <div class="form-group">
+                            <label for="name">Ime i prezime *</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Broj telefona *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Adresa za dostavu *</label>
+                            <input type="text" id="address" required>
+                        </div>
+                        <div class="payment-note">
+                            <i class="fas fa-info-circle"></i> Plaćanje pouzećem prilikom preuzimanja
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Napomena (opciono)</label>
+                            <textarea id="notes" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-order">Odustani</button>
+                            <button type="button" class="submit-order">Potvrdi narudžbu</button>
+                        </div>
+                    </div>
+                    
+                    <div class="order-success">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Hvala na narudžbi!</h4>
+                        <p>Vaša narudžba je primljena. Kontaktirat ćemo vas u najkraćem mogućem roku.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h3 class="section-title">Galerija</h3>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://lh3.googleusercontent.com/gps-cs-s/AB5caB8FDyIBzijuo9pEzgJdgOxNqSDk0ysJb_3lwc7UQFC-qqR5ZFUULQw6KYEi-XlB-iUVOz49gw5_6j2eZXfSx9_Ulf1FvXI_gZVX4Vr4oOfdQcCRYQrDgMwou88p8mnxUcrre1IOuA=s680-w680-h510" alt="Restaurant interior">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://lh3.googleusercontent.com/p/AF1QipNUJL5uvODN-3U1HhTFtdLNVs3ikYfYZkdsX9TF=s680-w680-h510-rw" alt="Bosnian cuisine">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://lh3.googleusercontent.com/p/AF1QipPdQC3kmiildMhepzvYudXvcoHSUXhnyfyCEx_P=s680-w680-h510-rw" alt="Dining experience">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://lh3.googleusercontent.com/gps-cs-s/AB5caB_C1EFweP6UUsX-cwN9QO70HPHZ6JU4n1HL9lcKJBYHUIXKref0OPK5bKoqpVDEovYEXnUz9nmzHlRiVw3Q1cQLWupzkWMTuRz3PW4e0ePGDCYQn2UqAOan2NrprQ-1PvbEXOlJHA=s680-w680-h510" alt="Chef preparing food">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3 class="section-title">Kontaktirajte nas</h3>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p> Dr. Irfana Ljubijankića 66, Bihać 77000</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+387 061-368-367</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>info@vezir.ba</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Radno vrijeme: 07:00 - 23:00</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/cevabdzinicavezirbihac/?locale=hr_HR"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/restoranvezir2025/"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="contact-divider">
+                    <div class="divider-line"></div>
+                    <img src="slike/logo.png" alt="Vezir" class="divider-icon">
+                    <div class="divider-line"></div>
+                </div>
+
+                <div class="map-container">
+                    <h4>Naša lokacija</h4>
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2819.043645434615!2d15.860449076056247!3d44.81955347621942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476141838ee9f437%3A0xccebc1381cb7003b!2zxIZldmFiZMW-aW5pY2EgVmV6aXI!5e1!3m2!1shr!2sba!4v1744405564687!5m2!1shr!2sba" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                    <div class="map-address">
+                        <p><i class="fas fa-map-marker-alt"></i> Dr. Irfana Ljubijankića 66, Bihać 77000</p>
+                        <a href="https://maps.google.com?q=Vezir+Bihac" class="directions-btn" target="_blank">
+                            <i class="fas fa-directions"></i> Pronađite nas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>VEZIR</h2>
+                    <span>Restoran Bihać</span>
+                </div>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#home">Početna stranica</a></li>
+                        <li><a href="#about">O nama</a></li>
+                        <li><a href="#menu">Meni</a></li>
+                        <li><a href="#order">Naručite online</a></li>
+                        <li><a href="#gallery">Galerija</a></li>
+                        <li><a href="#contact">Kontaktirajte nas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-legal">
+                    <p>&copy; 2025 Restoran Vezir. Sva Prava Zadržana.</p>
+                    <p>Designed by Tarik Abdijanović, Eldin Mešić & Hamdija Delanovic.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal">
+        <span class="close-modal">&times;</span>
+        <img src="" alt="" class="modal-img">
+    </div>
+
+    <script src="javascript/main.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+        const loadingScreen = document.getElementById('loading');
+        
+        // Increase the delay before fade-out starts (e.g., 2000ms = 2 seconds)
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';  // Start fade-out
+            
+            // Increase the fade-out duration (e.g., 1000ms = 1 second)
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';  // Hide after fade-out
+            }, 1000);  // This should match the CSS transition time
+        }, 1100);  // Wait 2 seconds before starting fade-out
+    });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize menu items - hide items beyond first 3 in each category
+            const menuCategories = document.querySelectorAll('.menu-category');
+
+            menuCategories.forEach(category => {
+                const items = category.querySelectorAll('.menu-item');
+                const showMoreBtn = category.querySelector('.show-more-btn');
+                const showLessBtn = category.querySelector('.show-less-btn');
+
+                // If there are 3 or fewer items, hide both buttons
+                if (items.length <= 3) {
+                    showMoreBtn.style.display = 'none';
+                    showLessBtn.style.display = 'none';
+                    return;
+                }
+
+                // Show only first 3 items initially
+                items.forEach((item, index) => {
+                    if (index >= 3) {
+                        item.classList.add('hidden-item');
+                    }
+                });
+            });
+
+            // Show more functionality
+            document.querySelectorAll('.show-more-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.parentElement;
+                    const hiddenItems = category.querySelectorAll('.hidden-item');
+                    const showLessBtn = category.querySelector('.show-less-btn');
+
+                    hiddenItems.forEach(item => {
+                        item.classList.remove('hidden-item');
+                    });
+
+                    this.style.display = 'none';
+                    showLessBtn.style.display = 'block';
+                });
+            });
+
+            // Show less functionality
+            document.querySelectorAll('.show-less-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.parentElement;
+                    const items = category.querySelectorAll('.menu-item');
+                    const showMoreBtn = category.querySelector('.show-more-btn');
+
+                    items.forEach((item, index) => {
+                        if (index >= 3) {
+                            item.classList.add('hidden-item');
+                        }
+                    });
+
+                    this.style.display = 'none';
+                    showMoreBtn.style.display = 'block';
+                });
+            });
+
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('.tab-btn');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons and categories
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.menu-category').forEach(cat => cat.classList.remove('active'));
+
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    // Show corresponding category
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+
+                    // Reset show more/less buttons when switching tabs
+                    const currentCategory = document.getElementById(tabId);
+                    const items = currentCategory.querySelectorAll('.menu-item');
+                    const showMoreBtn = currentCategory.querySelector('.show-more-btn');
+                    const showLessBtn = currentCategory.querySelector('.show-less-btn');
+
+                    if (items.length > 3) {
+                        showMoreBtn.style.display = 'block';
+                        showLessBtn.style.display = 'none';
+
+                        items.forEach((item, index) => {
+                            if (index >= 3) {
+                                item.classList.add('hidden-item');
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Order System Functionality
+            let cart = JSON.parse(localStorage.getItem('vezirCart')) || [];
+            
+            // Quantity buttons functionality
+            document.querySelectorAll('.quantity-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-item');
+                    const input = document.querySelector(`.quantity-input[data-item="${itemId}"]`);
+                    let value = parseInt(input.value);
+                    
+                    if (this.classList.contains('minus')) {
+                        if (value > 0) value--;
+                    } else {
+                        value++;
+                    }
+                    
+                    input.value = value;
+                });
+            });
+            
+            // Add to cart functionality
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = JSON.parse(this.getAttribute('data-item'));
+                    const quantityInput = document.querySelector(`.quantity-input[data-item="${item.id}"]`);
+                    const quantity = parseInt(quantityInput.value);
+                    
+                    if (quantity > 0) {
+                        // Check if item already in cart
+                        const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+                        
+                        if (existingItemIndex >= 0) {
+                            // Update quantity if item exists
+                            cart[existingItemIndex].quantity += quantity;
+                        } else {
+                            // Add new item to cart
+                            cart.push({
+                                id: item.id,
+                                name: item.name,
+                                price: item.price,
+                                quantity: quantity
+                            });
+                        }
+                        
+                        // Save to localStorage
+                        localStorage.setItem('vezirCart', JSON.stringify(cart));
+                        
+                        // Update cart display
+                        updateCartDisplay();
+                        
+                        // Reset quantity input
+                        quantityInput.value = 0;
+                        
+                        // Show success message
+                        alert(`${quantity} x ${item.name} dodano u korpu!`);
+                    }
+                });
+            });
+            
+            // Update cart display
+            function updateCartDisplay() {
+                const cartItemsContainer = document.querySelector('.cart-items');
+                const totalAmountElement = document.querySelector('.total-amount');
+                let total = 0;
+                
+                // Clear cart items
+                cartItemsContainer.innerHTML = '';
+                
+                if (cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<div class="empty-cart">Vaša korpa je prazna</div>';
+                    totalAmountElement.textContent = '0 KM';
+                    return;
+                }
+                
+                // Add each item to cart display
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'cart-item';
+                    itemElement.innerHTML = `
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-quantity">${item.quantity}x</div>
+                        <div class="cart-item-price">${itemTotal.toFixed(2)} KM</div>
+                        <button class="remove-item" data-id="${item.id}"><i class="fas fa-times"></i></button>
+                    `;
+                    cartItemsContainer.appendChild(itemElement);
+                });
+                
+                // Update total
+                totalAmountElement.textContent = `${total.toFixed(2)} KM`;
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.getAttribute('data-id');
+                        cart = cart.filter(item => item.id !== itemId);
+                        localStorage.setItem('vezirCart', JSON.stringify(cart));
+                        updateCartDisplay();
+                    });
+                });
+            }
+            
+            // Checkout button functionality
+            document.querySelector('.checkout-btn').addEventListener('click', function() {
+                if (cart.length === 0) {
+                    alert('Vaša korpa je prazna. Dodajte proizvode prije nego što nastavite.');
+                    return;
+                }
+                
+                // Show checkout form
+                document.querySelector('.checkout-form').style.display = 'block';
+                this.style.display = 'none';
+            });
+            
+            // Cancel order button
+            document.querySelector('.cancel-order').addEventListener('click', function() {
+                document.querySelector('.checkout-form').style.display = 'none';
+                document.querySelector('.checkout-btn').style.display = 'block';
+            });
+            
+            // Submit order button (frontend only - just shows a message)
+            document.querySelector('.submit-order').addEventListener('click', function() {
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+                const notes = document.getElementById('notes').value;
+                
+                if (!name || !phone || !address) {
+                    alert('Molimo popunite sva obavezna polja označena sa *.');
+                    return;
+                }
+                
+                // Hide form and show success message
+                document.querySelector('.checkout-form').style.display = 'none';
+                document.querySelector('.order-success').style.display = 'block';
+                
+                // In a real implementation, this would send data to a server
+                console.log('Order submitted:', {
+                    customer: { name, phone, address },
+                    notes: notes,
+                    payment: 'pouzećem',
+                    items: cart,
+                    total: document.querySelector('.total-amount').textContent
+                });
+                
+                // Clear cart after 5 seconds
+                setTimeout(() => {
+                    cart = [];
+                    localStorage.removeItem('vezirCart');
+                    updateCartDisplay();
+                    document.querySelector('.order-success').style.display = 'none';
+                    document.querySelector('.checkout-btn').style.display = 'block';
+                    document.querySelector('form').reset();
+                }, 5000);
+            });
+            
+            // Initialize cart display
+            updateCartDisplay();
+        });
+
+        document.querySelector('.hamburger').addEventListener('click', function() {
+    this.classList.toggle('active');
+    document.querySelector('.nav-links').classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+        document.querySelector('.hamburger').classList.remove('active');
+        document.querySelector('.nav-links').classList.remove('active');
+    });
+});
+    </script>
+</body>
+</html>
