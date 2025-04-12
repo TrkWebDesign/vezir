@@ -1,3 +1,15 @@
+/* === ADD THIS AT THE VERY TOP OF style.css === */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  * {
+    box-sizing: border-box; /* Critical for padding/margin math */
+  }
+
 /* Global Styles */
 :root {
     --primary-color: #eca474; /* Gold */
@@ -262,14 +274,20 @@ ul {
 }
 
 .signature {
+    font-family: 'Brush Script MT', cursive, 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #333;
+    margin-top: 20px;
     position: relative;
-    left: -120px; /* Moves it further left if needed */
-    margin-top: -35px;
+    display: inline-block;
+    font-style: italic;
+    transform: rotate(-5deg);
 }
 
-.signature-img {
-    height: 150px; /* Even larger */
-    transform: scaleX(1.1); /* Optional: makes signature slightly wider */
+.signature-container {
+    text-align: left;
+    width: 100%;
+    margin-top: 20px;
 }
 
 /* Menu Section */
@@ -643,21 +661,21 @@ ul {
     }
     
     .hamburger {
-        display: flex;
+        display: none;
+        cursor: pointer;
+        padding: 10px;
+        z-index: 1000;
     }
     
-    .hamburger.active span:nth-child(1) {
-        transform: translateY(9px) rotate(45deg);
+    .hamburger .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 5px auto;
+        background-color: #333;
+        transition: all 0.3s ease;
     }
-    
-    .hamburger.active span:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .hamburger.active span:nth-child(3) {
-        transform: translateY(-9px) rotate(-45deg);
-    }
-    
+
     .hero-content h2 {
         font-size: 2.5rem;
     }
@@ -694,4 +712,3 @@ ul {
         flex-direction: column;
     }
 }
-
