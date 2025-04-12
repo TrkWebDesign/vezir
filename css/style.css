@@ -31,8 +31,6 @@ body {
     font-family: var(--font-body);
     color: var(--text-color);
     line-height: 1.6;
-    margin: 0;
-    padding: 0;
 }
 
 .container {
@@ -1135,6 +1133,20 @@ ul {
     .hamburger {
         display: flex;
     }
+
+    .image-frame {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Remove the brown border: */
+        border: none !important; 
+        /* Optional: Add a different border if desired (e.g., thin gray) */
+        /* border: 1px solid #ddd !important; */
+        box-shadow: none !important;
+        overflow: hidden;
+    }
     
     .nav-links {
         display: none;
@@ -1161,6 +1173,10 @@ ul {
         color: #333;
         font-size: 1.2rem;
         padding: 10px 20px;
+    }
+
+    .container {
+        padding: 0 10px;
     }
     
     .hero-content h2 {
@@ -1201,11 +1217,14 @@ ul {
     }
     
     .signature {
-        display: block;
-        text-align: center;
-        transform: none;
-        margin: 20px auto 0;
-        font-size: 2rem;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Remove any pseudo-elements (if present) */
+    .signature::before, .signature::after {
+        content: none !important;
     }
     
     .signature-container {
