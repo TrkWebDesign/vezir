@@ -186,7 +186,7 @@ ul {
 .hero {
     height: 100vh;
     min-height: 600px;
-    background: url('/header_Nero_AI_Image_Upscaler_Photo_Face.jpeg') no-repeat center center/cover;
+    background: url('header_Nero_AI_Image_Upscaler_Photo_Face.jpeg') no-repeat center center/cover;
     position: relative;
     display: flex;
     align-items: center;
