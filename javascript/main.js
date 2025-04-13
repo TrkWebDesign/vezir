@@ -1,31 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Loading screen functionality
+    // ========== LOADING SCREEN ==========
+    const loadingScreen = document.getElementById('loading');
     window.addEventListener('load', function() {
-        const loadingScreen = document.getElementById('loading');
-        
         setTimeout(() => {
             loadingScreen.style.opacity = '0';
-            
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
             }, 1000);
         }, 1100);
     });
 
-    // Mobile Navigation - Fixed hamburger menu
+    // ========== MOBILE NAVIGATION ==========
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
     
     hamburger.addEventListener('click', function() {
         this.classList.toggle('active');
         navLinks.classList.toggle('active');
-        
-        // Toggle body overflow when menu is open
-        if (navLinks.classList.contains('active')) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
-        }
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
     });
     
     // Close mobile menu when clicking a link
@@ -37,107 +29,212 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Sticky Header
+    // ========== STICKY HEADER ==========
     const header = document.querySelector('.header');
     window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
+        header.classList.toggle('scrolled', window.scrollY > 100);
     });
     
-    // Menu Tabs
+    // ========== MENU SYSTEM ==========
     const tabBtns = document.querySelectorAll('.tab-btn');
     const menuCategories = document.querySelectorAll('.menu-category');
     
+    // Tab switching functionality
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             // Remove active class from all buttons and categories
             tabBtns.forEach(btn => btn.classList.remove('active'));
             menuCategories.forEach(cat => cat.classList.remove('active'));
             
-            // Add active class to clicked button
+            // Add active class to clicked button and corresponding category
             this.classList.add('active');
-            
-            // Show corresponding category
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
             
             // Reset show more/less buttons when switching tabs
-            const currentCategory = document.getElementById(tabId);
-            const items = currentCategory.querySelectorAll('.menu-item');
-            const showMoreBtn = currentCategory.querySelector('.show-more-btn');
-            const showLessBtn = currentCategory.querySelector('.show-less-btn');
-
-            if (items.length > 3) {
-                if (showMoreBtn) showMoreBtn.style.display = 'block';
-                if (showLessBtn) showLessBtn.style.display = 'none';
-
-                items.forEach((item, index) => {
-                    if (index >= 3) {
-                        item.classList.add('hidden-item');
-                    }
-                });
-            }
+            resetMenuItemsDisplay(tabId);
         });
     });
     
-    // Show more/less functionality for menu items
+    // Show more/less functionality
     document.querySelectorAll('.show-more-btn').forEach(button => {
         button.addEventListener('click', function() {
             const category = this.parentElement;
-            const hiddenItems = category.querySelectorAll('.hidden-item');
-            const showLessBtn = category.querySelector('.show-less-btn');
-
-            hiddenItems.forEach(item => {
-                item.classList.remove('hidden-item');
-            });
-
+            toggleMenuItems(category, false); // Show all items
             this.style.display = 'none';
-            showLessBtn.style.display = 'block';
+            category.querySelector('.show-less-btn').style.display = 'block';
         });
     });
 
     document.querySelectorAll('.show-less-btn').forEach(button => {
         button.addEventListener('click', function() {
             const category = this.parentElement;
-            const items = category.querySelectorAll('.menu-item');
-            const showMoreBtn = category.querySelector('.show-more-btn');
-
-            items.forEach((item, index) => {
-                if (index >= 3) {
-                    item.classList.add('hidden-item');
-                }
-            });
-
+            toggleMenuItems(category, true); // Hide extra items
             this.style.display = 'none';
-            showMoreBtn.style.display = 'block';
+            category.querySelector('.show-more-btn').style.display = 'block';
         });
     });
 
-    // Initialize menu items - hide items beyond first 3 in each category
+    // Initialize menu items display
     menuCategories.forEach(category => {
         const items = category.querySelectorAll('.menu-item');
         const showMoreBtn = category.querySelector('.show-more-btn');
         const showLessBtn = category.querySelector('.show-less-btn');
 
-        // If there are 3 or fewer items, hide both buttons
         if (items.length <= 3) {
             if (showMoreBtn) showMoreBtn.style.display = 'none';
             if (showLessBtn) showLessBtn.style.display = 'none';
-            return;
+        } else {
+            toggleMenuItems(category, true); // Hide extra items initially
         }
+    });
 
-        // Show only first 3 items initially
+    // Helper function to toggle menu items display
+    function toggleMenuItems(category, hideExtra) {
+        const items = category.querySelectorAll('.menu-item');
         items.forEach((item, index) => {
             if (index >= 3) {
-                item.classList.add('hidden-item');
+                item.classList.toggle('hidden-item', hideExtra);
             }
         });
+    }
+
+    // Helper function to reset menu items display when switching tabs
+    function resetMenuItemsDisplay(tabId) {
+        const currentCategory = document.getElementById(tabId);
+        const showMoreBtn = currentCategory.querySelector('.show-more-btn');
+        const showLessBtn = currentCategory.querySelector('.show-less-btn');
+        const items = currentCategory.querySelectorAll('.menu-item');
+
+        if (items.length > 3) {
+            if (showMoreBtn) showMoreBtn.style.display = 'block';
+            if (showLessBtn) showLessBtn.style.display = 'none';
+            toggleMenuItems(currentCategory, true);
+        }
+    }
+
+    // ========== GALLERY NAVIGATION ==========
+    const gallerySlides = document.querySelectorAll('.gallery-slide');
+    const prevArrow = document.querySelector('.prev-arrow');
+    const nextArrow = document.querySelector('.next-arrow');
+    const dotsContainer = document.querySelector('.gallery-dots');
+    let currentIndex = 0;
+    
+    // Create dots dynamically based on number of slides
+    function createDots() {
+        dotsContainer.innerHTML = '';
+        gallerySlides.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = 'dot';
+            dot.setAttribute('data-index', index);
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                currentIndex = index;
+                showSlide(currentIndex);
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+    
+    // Enhanced showSlide function with smooth transitions
+    function showSlide(index) {
+        // Hide all slides
+        gallerySlides.forEach(slide => {
+            slide.style.opacity = '0';
+            slide.style.transform = 'scale(0.95)';
+            slide.classList.remove('active');
+        });
+        
+        // Show selected slide with animation
+        const activeSlide = gallerySlides[index];
+        activeSlide.classList.add('active');
+        setTimeout(() => {
+            activeSlide.style.opacity = '1';
+            activeSlide.style.transform = 'scale(1)';
+        }, 10);
+        
+        // Update dots
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach(dot => dot.classList.remove('active'));
+        dots[index].classList.add('active');
+        
+        // Update arrow states
+        prevArrow.style.opacity = index === 0 ? '0.5' : '1';
+        nextArrow.style.opacity = index === gallerySlides.length - 1 ? '0.5' : '1';
+    }
+    
+    // Navigation functions
+    function goToNext() {
+        currentIndex = (currentIndex + 1) % gallerySlides.length;
+        showSlide(currentIndex);
+    }
+    
+    function goToPrev() {
+        currentIndex = (currentIndex - 1 + gallerySlides.length) % gallerySlides.length;
+        showSlide(currentIndex);
+    }
+    
+    // Event listeners
+    nextArrow.addEventListener('click', goToNext);
+    prevArrow.addEventListener('click', goToPrev);
+    
+    // Touch/swipe events
+    let touchStartX = 0;
+    galleryContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    
+    galleryContainer.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+        
+        if (diff > 50) goToNext(); // Swipe left
+        if (diff < -50) goToPrev(); // Swipe right
+    }, { passive: true });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') goToNext();
+        if (e.key === 'ArrowLeft') goToPrev();
     });
     
-    // Gallery Modal
+    // Initialize
+    createDots();
+    showSlide(currentIndex);
+    
+    // Optional auto-advance with pause on hover
+    let slideInterval;
+    function startAutoSlide() {
+        slideInterval = setInterval(goToNext, 5000);
+    }
+    
+    function stopAutoSlide() {
+        clearInterval(slideInterval);
+    }
+    
+    galleryContainer.addEventListener('mouseenter', stopAutoSlide);
+    galleryContainer.addEventListener('mouseleave', startAutoSlide);
+    startAutoSlide();
+});
+
+    // Optional auto-advance (uncomment if you want it)
+    // let slideInterval = setInterval(() => {
+    //     currentIndex = (currentIndex + 1) % gallerySlides.length;
+    //     showSlide(currentIndex);
+    // }, 5000);
+    
+    // galleryContainer.addEventListener('mouseenter', () => {
+    //     clearInterval(slideInterval);
+    // });
+    
+    // galleryContainer.addEventListener('mouseleave', () => {
+    //     slideInterval = setInterval(() => {
+    //         currentIndex = (currentIndex + 1) % gallerySlides.length;
+    //         showSlide(currentIndex);
+    //     }, 5000);
+    // });
+    
+    // ========== GALLERY MODAL ==========
     const galleryItems = document.querySelectorAll('.gallery-item');
     const modal = document.querySelector('.modal');
     const modalImg = document.querySelector('.modal-img');
@@ -164,18 +261,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Order System Functionality
+    // ========== ORDER SYSTEM ==========
     let cart = JSON.parse(localStorage.getItem('vezirCart')) || [];
     
-    // Quantity buttons functionality
+    // Quantity buttons
     document.querySelectorAll('.quantity-btn').forEach(button => {
         button.addEventListener('click', function() {
             const itemId = this.getAttribute('data-item');
             const input = document.querySelector(`.quantity-input[data-item="${itemId}"]`);
-            let value = parseInt(input.value);
+            let value = parseInt(input.value) || 0;
             
             if (this.classList.contains('minus')) {
-                if (value > 0) value--;
+                value = Math.max(0, value - 1);
             } else {
                 value++;
             }
@@ -184,148 +281,155 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add to cart functionality
+    // Add to cart
     document.querySelectorAll('.add-to-cart').forEach(button => {
         button.addEventListener('click', function() {
             const item = JSON.parse(this.getAttribute('data-item'));
             const quantityInput = document.querySelector(`.quantity-input[data-item="${item.id}"]`);
-            const quantity = parseInt(quantityInput.value);
+            const quantity = parseInt(quantityInput.value) || 0;
             
             if (quantity > 0) {
-                // Check if item already in cart
-                const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
-                
-                if (existingItemIndex >= 0) {
-                    // Update quantity if item exists
-                    cart[existingItemIndex].quantity += quantity;
-                } else {
-                    // Add new item to cart
-                    cart.push({
-                        id: item.id,
-                        name: item.name,
-                        price: item.price,
-                        quantity: quantity
-                    });
-                }
-                
-                // Save to localStorage
-                localStorage.setItem('vezirCart', JSON.stringify(cart));
-                
-                // Update cart display
-                updateCartDisplay();
-                
-                // Reset quantity input
+                addToCart(item, quantity);
                 quantityInput.value = 0;
-                
-                // Show success message
-                alert(`${quantity} x ${item.name} dodano u korpu!`);
+                showToast(`${quantity} x ${item.name} dodano u korpu!`);
             }
         });
     });
     
-    // Update cart display
+    // Cart functionality
+    function addToCart(item, quantity) {
+        const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+        
+        if (existingItemIndex >= 0) {
+            cart[existingItemIndex].quantity += quantity;
+        } else {
+            cart.push({
+                ...item,
+                quantity: quantity
+            });
+        }
+        
+        saveCart();
+        updateCartDisplay();
+    }
+    
+    function removeFromCart(itemId) {
+        cart = cart.filter(item => item.id !== itemId);
+        saveCart();
+        updateCartDisplay();
+    }
+    
+    function saveCart() {
+        localStorage.setItem('vezirCart', JSON.stringify(cart));
+    }
+    
     function updateCartDisplay() {
         const cartItemsContainer = document.querySelector('.cart-items');
         const totalAmountElement = document.querySelector('.total-amount');
         let total = 0;
         
-        // Clear cart items
-        cartItemsContainer.innerHTML = '';
+        cartItemsContainer.innerHTML = cart.length === 0 
+            ? '<div class="empty-cart">Vaša korpa je prazna</div>'
+            : cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-quantity">${item.quantity}x</div>
+                        <div class="cart-item-price">${itemTotal.toFixed(2)} KM</div>
+                        <button class="remove-item" data-id="${item.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
         
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<div class="empty-cart">Vaša korpa je prazna</div>';
-            totalAmountElement.textContent = '0 KM';
-            return;
-        }
-        
-        // Add each item to cart display
-        cart.forEach(item => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
-            
-            const itemElement = document.createElement('div');
-            itemElement.className = 'cart-item';
-            itemElement.innerHTML = `
-                <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-quantity">${item.quantity}x</div>
-                <div class="cart-item-price">${itemTotal.toFixed(2)} KM</div>
-                <button class="remove-item" data-id="${item.id}"><i class="fas fa-times"></i></button>
-            `;
-            cartItemsContainer.appendChild(itemElement);
-        });
-        
-        // Update total
         totalAmountElement.textContent = `${total.toFixed(2)} KM`;
         
         // Add event listeners to remove buttons
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', function() {
-                const itemId = this.getAttribute('data-id');
-                cart = cart.filter(item => item.id !== itemId);
-                localStorage.setItem('vezirCart', JSON.stringify(cart));
-                updateCartDisplay();
+                removeFromCart(this.getAttribute('data-id'));
             });
         });
     }
     
-    // Checkout button functionality
-    document.querySelector('.checkout-btn').addEventListener('click', function() {
+    // Checkout process
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    const checkoutForm = document.querySelector('.checkout-form');
+    const orderSuccess = document.querySelector('.order-success');
+    
+    checkoutBtn.addEventListener('click', function() {
         if (cart.length === 0) {
-            alert('Vaša korpa je prazna. Dodajte proizvode prije nego što nastavite.');
+            showToast('Vaša korpa je prazna. Dodajte proizvode prije narudžbe.', 'error');
             return;
         }
         
-        // Show checkout form
-        document.querySelector('.checkout-form').style.display = 'block';
+        checkoutForm.style.display = 'block';
         this.style.display = 'none';
     });
     
-    // Cancel order button
     document.querySelector('.cancel-order').addEventListener('click', function() {
-        document.querySelector('.checkout-form').style.display = 'none';
-        document.querySelector('.checkout-btn').style.display = 'block';
+        checkoutForm.style.display = 'none';
+        checkoutBtn.style.display = 'block';
     });
     
-    // Submit order button (frontend only - just shows a message)
     document.querySelector('.submit-order').addEventListener('click', function() {
-        const name = document.getElementById('name').value;
-        const phone = document.getElementById('phone').value;
-        const address = document.getElementById('address').value;
-        const notes = document.getElementById('notes').value;
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const notes = document.getElementById('notes').value.trim();
         
         if (!name || !phone || !address) {
-            alert('Molimo popunite sva obavezna polja označena sa *.');
+            showToast('Molimo popunite sva obavezna polja označena sa *.', 'error');
             return;
         }
         
-        // Hide form and show success message
-        document.querySelector('.checkout-form').style.display = 'none';
-        document.querySelector('.order-success').style.display = 'block';
-        
-        // In a real implementation, this would send data to a server
+        // In a real app, you would send this data to your server
         console.log('Order submitted:', {
             customer: { name, phone, address },
-            notes: notes,
-            payment: 'pouzećem',
+            notes,
             items: cart,
-            total: document.querySelector('.total-amount').textContent
+            total: document.querySelector('.total-amount').textContent,
+            date: new Date().toISOString()
         });
         
-        // Clear cart after 5 seconds
+        // Show success UI
+        checkoutForm.style.display = 'none';
+        orderSuccess.style.display = 'block';
+        
+        // Clear cart after delay
         setTimeout(() => {
             cart = [];
-            localStorage.removeItem('vezirCart');
+            saveCart();
             updateCartDisplay();
-            document.querySelector('.order-success').style.display = 'none';
-            document.querySelector('.checkout-btn').style.display = 'block';
+            orderSuccess.style.display = 'none';
+            checkoutBtn.style.display = 'block';
             document.querySelector('form').reset();
         }, 5000);
     });
     
-    // Initialize cart display
-    updateCartDisplay();
-
-    // Smooth scrolling for anchor links
+    // Toast notification
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }, 100);
+    }
+    
+    // ========== SMOOTH SCROLLING ==========
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -344,5 +448,124 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
+    });
+    
+    // ========== MENU ITEM HOVER IMAGES ==========
+    document.querySelectorAll('.menu-item-hover').forEach(element => {
+        const imageUrl = element.style.getPropertyValue('--item-image');
+        if (imageUrl) {
+            element.style.setProperty('--hover-image', imageUrl);
+        }
+    });
+    
+    // Initialize cart display
+    updateCartDisplay();
+
+// Toggle category items visibility
+document.querySelectorAll('.toggle-category').forEach(button => {
+    button.addEventListener('click', function() {
+        const categoryItems = this.closest('.order-category').querySelector('.category-items');
+        const isHidden = categoryItems.style.display === 'none';
+        
+        if (isHidden) {
+            categoryItems.style.display = 'block';
+            this.textContent = 'Sakrij';
+        } else {
+            categoryItems.style.display = 'none';
+            this.textContent = 'Prikaži';
+        }
+
+    });
+});
+
+// Gallery scrolling functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const gallery = document.querySelector('.gallery');
+    const scrollLeftBtn = document.querySelector('.scroll-btn.left');
+    const scrollRightBtn = document.querySelector('.scroll-btn.right');
+    const modal = document.querySelector('.modal');
+    const modalImg = document.querySelector('.modal-img');
+    const closeModal = document.querySelector('.close-modal');
+    
+    // Function to check scroll position and update arrow visibility
+    function updateArrowVisibility() {
+        // Hide left arrow if at the start
+        if (gallery.scrollLeft <= 10) {
+            scrollLeftBtn.classList.add('hidden');
+        } else {
+            scrollLeftBtn.classList.remove('hidden');
+        }
+        
+        // Hide right arrow if at the end
+        if (gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 10) {
+            scrollRightBtn.classList.add('hidden');
+        } else {
+            scrollRightBtn.classList.remove('hidden');
+        }
+    }
+    
+    // Initial check
+    updateArrowVisibility();
+    
+    // Scroll buttons functionality
+    scrollLeftBtn.addEventListener('click', () => {
+        gallery.scrollBy({
+            left: -300,
+            behavior: 'smooth'
+        });
+    });
+    
+    scrollRightBtn.addEventListener('click', () => {
+        gallery.scrollBy({
+            left: 300,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Update arrows on scroll
+    gallery.addEventListener('scroll', updateArrowVisibility);
+    
+    // Update arrows when window is resized
+    window.addEventListener('resize', updateArrowVisibility);
+    
+    // Modal functionality for gallery images
+    const galleryImages = document.querySelectorAll('.gallery img');
+    galleryImages.forEach(img => {
+        img.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            modalImg.src = img.src;
+        });
+    });
+    
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+    
+    // Close modal when clicking outside the image
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Keyboard navigation for modal
+    document.addEventListener('keydown', (e) => {
+        if (modal.style.display === 'flex') {
+            if (e.key === 'Escape') {
+                modal.style.display = 'none';
+            } else if (e.key === 'ArrowLeft') {
+                // Navigate to previous image
+                const currentIndex = Array.from(galleryImages).findIndex(img => img.src === modalImg.src);
+                if (currentIndex > 0) {
+                    modalImg.src = galleryImages[currentIndex - 1].src;
+                }
+            } else if (e.key === 'ArrowRight') {
+                // Navigate to next image
+                const currentIndex = Array.from(galleryImages).findIndex(img => img.src === modalImg.src);
+                if (currentIndex < galleryImages.length - 1) {
+                    modalImg.src = galleryImages[currentIndex + 1].src;
+                }
+            }
+        }
     });
 });
