@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const recipient = 'tarik.abdijanvic@gmail.com';
         const subject = 'Nova Narudžba';
         
-        // Build the email body (same as before)
+        // Build the email body
         let body = 'Detalji narudžbe:\n\n';
         body += `Ime: ${orderDetails.customer.name}\n`;
         body += `Telefon: ${orderDetails.customer.phone}\n`;
@@ -434,25 +434,44 @@ document.addEventListener('DOMContentLoaded', function() {
         body += `\nUkupno: ${orderDetails.total}\n`;
         body += `Datum: ${orderDetails.date}\n`;
       
-        // ===== 1. PRIMARY METHOD: Force Gmail with Pre-Filled Draft =====
-        // (Works on desktop browsers + Android. iOS may still open Mail.app.)
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        
-        // Open in a new tab (avoids Outlook hijacking on Windows)
-        const newTab = window.open(gmailUrl, '_blank');
-        
-        // ===== 2. FALLBACK: If Gmail fails, use mailto with Outlook bypass =====
-        setTimeout(() => {
-          if (!newTab || newTab.closed || newTab.document.URL === 'about:blank') {
-            // Fallback 1: Direct Gmail link (for users already logged in)
-            window.location.href = gmailUrl;
-            
-            // Fallback 2: mailto with a warning (last resort)
-            setTimeout(() => {
-              window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            }, 500);
-          }
-        }, 500);
+        // Encode for URLs
+        const encodedSubject = encodeURIComponent(subject);
+        const encodedBody = encodeURIComponent(body);
+      
+        // ===== 1. Mobile Device Detection =====
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+        if (isMobile) {
+          // ===== MOBILE SOLUTION =====
+          // Try to open Gmail app directly (works on Android)
+          window.location.href = `googlegmail:///co?to=${recipient}&subject=${encodedSubject}&body=${encodedBody}`;
+          
+          // Fallback 1: If Gmail app isn't installed, open Play Store to install it
+          setTimeout(() => {
+            if (!document.hidden) {
+              window.location.href = `https://play.google.com/store/apps/details?id=com.google.android.gm`;
+            }
+          }, 500);
+          
+          // Fallback 2: If all else fails, use regular Gmail web
+          setTimeout(() => {
+            if (!document.hidden) {
+              window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodedSubject}&body=${encodedBody}`;
+            }
+          }, 1000);
+          
+        } else {
+          // ===== DESKTOP SOLUTION =====
+          // Force Gmail in new tab (bypasses Outlook)
+          const gmailTab = window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodedSubject}&body=${encodedBody}`, '_blank');
+          
+          // Fallback if popup blocked
+          setTimeout(() => {
+            if (!gmailTab || gmailTab.closed) {
+              window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodedSubject}&body=${encodedBody}`;
+            }
+          }, 500);
+        }
       }
 
 
