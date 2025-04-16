@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to send order confirmation email
     function sendOrderConfirmationEmail(orderDetails) {
-        const recipient = 'tarikk.abdijanvic@gmail.com';
+        const recipient = 'tarikk.abdijanovic@gmail.com';
         const subject = 'Nova Narudžba';
         
         // Build the email body
