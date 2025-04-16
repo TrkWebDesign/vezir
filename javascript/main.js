@@ -360,46 +360,50 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkoutBtn = document.querySelector('.checkout-btn');
     const checkoutForm = document.querySelector('.checkout-form');
     const orderSuccess = document.querySelector('.order-success');
-    
+
     checkoutBtn.addEventListener('click', function() {
         if (cart.length === 0) {
             showToast('Vaša korpa je prazna. Dodajte proizvode prije narudžbe.', 'error');
             return;
         }
-        
+
         checkoutForm.style.display = 'block';
         this.style.display = 'none';
     });
-    
+
     document.querySelector('.cancel-order').addEventListener('click', function() {
         checkoutForm.style.display = 'none';
         checkoutBtn.style.display = 'block';
     });
-    
+
     document.querySelector('.submit-order').addEventListener('click', function() {
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const address = document.getElementById('address').value.trim();
         const notes = document.getElementById('notes').value.trim();
-        
+
         if (!name || !phone || !address) {
             showToast('Molimo popunite sva obavezna polja označena sa *.', 'error');
             return;
         }
-        
-        // In a real app, you would send this data to your server
-        console.log('Order submitted:', {
+
+        // Collect order details
+        const orderDetails = {
             customer: { name, phone, address },
             notes,
             items: cart,
             total: document.querySelector('.total-amount').textContent,
             date: new Date().toISOString()
-        });
-        
+        };
+
+        // Send email
+        sendOrderConfirmationEmail(orderDetails);
+
+
         // Show success UI
         checkoutForm.style.display = 'none';
         orderSuccess.style.display = 'block';
-        
+
         // Clear cart after delay
         setTimeout(() => {
             cart = [];
@@ -410,14 +414,55 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('form').reset();
         }, 5000);
     });
-    
+
+
+    // Function to send order confirmation email
+    function sendOrderConfirmationEmail(orderDetails) {
+        const recipient = 'tarik.abdijanvic@gmail.com';
+        const subject = 'Nova Narudžba';
+        
+        // Build the email body (same as before)
+        let body = 'Detalji narudžbe:\n\n';
+        body += `Ime: ${orderDetails.customer.name}\n`;
+        body += `Telefon: ${orderDetails.customer.phone}\n`;
+        body += `Adresa: ${orderDetails.customer.address}\n`;
+        body += `Napomene: ${orderDetails.notes}\n\n`;
+        body += 'Artikli:\n';
+        orderDetails.items.forEach(item => {
+          body += `- ${item.name} x ${item.quantity} = ${item.price * item.quantity} KM\n`;
+        });
+        body += `\nUkupno: ${orderDetails.total}\n`;
+        body += `Datum: ${orderDetails.date}\n`;
+      
+        // ===== 1. PRIMARY METHOD: Force Gmail with Pre-Filled Draft =====
+        // (Works on desktop browsers + Android. iOS may still open Mail.app.)
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        
+        // Open in a new tab (avoids Outlook hijacking on Windows)
+        const newTab = window.open(gmailUrl, '_blank');
+        
+        // ===== 2. FALLBACK: If Gmail fails, use mailto with Outlook bypass =====
+        setTimeout(() => {
+          if (!newTab || newTab.closed || newTab.document.URL === 'about:blank') {
+            // Fallback 1: Direct Gmail link (for users already logged in)
+            window.location.href = gmailUrl;
+            
+            // Fallback 2: mailto with a warning (last resort)
+            setTimeout(() => {
+              window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            }, 500);
+          }
+        }, 500);
+      }
+
+
     // Toast notification
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.textContent = message;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.classList.add('show');
             setTimeout(() => {
