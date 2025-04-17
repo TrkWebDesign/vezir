@@ -1,26 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // ========== LOADING SCREEN ==========
+    // ========== LOADING SCREEN ==========\
     const loadingScreen = document.getElementById('loading');
     window.addEventListener('load', function() {
         setTimeout(() => {
             loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
+            setTimeout(() => {                loadingScreen.style.display = 'none';
             }, 1000);
         }, 1100);
     });
 
-    // ========== MOBILE NAVIGATION ==========
+    // ========== MOBILE NAVIGATION ==========\
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
-    
+
     hamburger.addEventListener('click', function() {
         this.classList.toggle('active');
         navLinks.classList.toggle('active');
         document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
-    });
-    
-    // Close mobile menu when clicking a link
+    });    // Close mobile menu when clicking a link
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', () => {
             hamburger.classList.remove('active');
@@ -28,34 +25,34 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = 'auto';
         });
     });
-    
-    // ========== STICKY HEADER ==========
+
+    // ========== STICKY HEADER ==========\
     const header = document.querySelector('.header');
     window.addEventListener('scroll', function() {
         header.classList.toggle('scrolled', window.scrollY > 100);
     });
-    
-    // ========== MENU SYSTEM ==========
+
+    // ========== MENU SYSTEM ==========\
     const tabBtns = document.querySelectorAll('.tab-btn');
     const menuCategories = document.querySelectorAll('.menu-category');
-    
+
     // Tab switching functionality
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             // Remove active class from all buttons and categories
             tabBtns.forEach(btn => btn.classList.remove('active'));
             menuCategories.forEach(cat => cat.classList.remove('active'));
-            
+
             // Add active class to clicked button and corresponding category
             this.classList.add('active');
             const tabId = this.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
-            
+
             // Reset show more/less buttons when switching tabs
             resetMenuItemsDisplay(tabId);
         });
     });
-    
+
     // Show more/less functionality
     document.querySelectorAll('.show-more-btn').forEach(button => {
         button.addEventListener('click', function() {
@@ -113,13 +110,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ========== GALLERY NAVIGATION ==========
+    // ========== GALLERY NAVIGATION ==========\
     const gallerySlides = document.querySelectorAll('.gallery-slide');
     const prevArrow = document.querySelector('.prev-arrow');
     const nextArrow = document.querySelector('.next-arrow');
     const dotsContainer = document.querySelector('.gallery-dots');
     let currentIndex = 0;
-    
+
     // Create dots dynamically based on number of slides
     function createDots() {
         dotsContainer.innerHTML = '';
@@ -135,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dotsContainer.appendChild(dot);
         });
     }
-    
+
     // Enhanced showSlide function with smooth transitions
     function showSlide(index) {
         // Hide all slides
@@ -144,74 +141,72 @@ document.addEventListener('DOMContentLoaded', function() {
             slide.style.transform = 'scale(0.95)';
             slide.classList.remove('active');
         });
-        
+
         // Show selected slide with animation
         const activeSlide = gallerySlides[index];
         activeSlide.classList.add('active');
         setTimeout(() => {
             activeSlide.style.opacity = '1';
             activeSlide.style.transform = 'scale(1)';
-        }, 10);
-        
-        // Update dots
+        }, 10);        // Update dots
         const dots = document.querySelectorAll('.dot');
         dots.forEach(dot => dot.classList.remove('active'));
         dots[index].classList.add('active');
-        
+
         // Update arrow states
         prevArrow.style.opacity = index === 0 ? '0.5' : '1';
         nextArrow.style.opacity = index === gallerySlides.length - 1 ? '0.5' : '1';
     }
-    
+
     // Navigation functions
     function goToNext() {
         currentIndex = (currentIndex + 1) % gallerySlides.length;
         showSlide(currentIndex);
     }
-    
+
     function goToPrev() {
         currentIndex = (currentIndex - 1 + gallerySlides.length) % gallerySlides.length;
         showSlide(currentIndex);
     }
-    
+
     // Event listeners
     nextArrow.addEventListener('click', goToNext);
     prevArrow.addEventListener('click', goToPrev);
-    
+
     // Touch/swipe events
     let touchStartX = 0;
     galleryContainer.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
     }, { passive: true });
-    
+
     galleryContainer.addEventListener('touchend', (e) => {
         const touchEndX = e.changedTouches[0].clientX;
         const diff = touchStartX - touchEndX;
-        
+
         if (diff > 50) goToNext(); // Swipe left
         if (diff < -50) goToPrev(); // Swipe right
     }, { passive: true });
-    
+
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') goToNext();
         if (e.key === 'ArrowLeft') goToPrev();
     });
-    
+
     // Initialize
     createDots();
     showSlide(currentIndex);
-    
+
     // Optional auto-advance with pause on hover
     let slideInterval;
     function startAutoSlide() {
         slideInterval = setInterval(goToNext, 5000);
     }
-    
+
     function stopAutoSlide() {
         clearInterval(slideInterval);
     }
-    
+
     galleryContainer.addEventListener('mouseenter', stopAutoSlide);
     galleryContainer.addEventListener('mouseleave', startAutoSlide);
     startAutoSlide();
@@ -222,24 +217,24 @@ document.addEventListener('DOMContentLoaded', function() {
     //     currentIndex = (currentIndex + 1) % gallerySlides.length;
     //     showSlide(currentIndex);
     // }, 5000);
-    
+
     // galleryContainer.addEventListener('mouseenter', () => {
     //     clearInterval(slideInterval);
     // });
-    
+
     // galleryContainer.addEventListener('mouseleave', () => {
     //     slideInterval = setInterval(() => {
     //         currentIndex = (currentIndex + 1) % gallerySlides.length;
     //         showSlide(currentIndex);
     //     }, 5000);
     // });
-    
-    // ========== GALLERY MODAL ==========
+
+    // ========== GALLERY MODAL ==========\
     const galleryItems = document.querySelectorAll('.gallery-item');
     const modal = document.querySelector('.modal');
     const modalImg = document.querySelector('.modal-img');
     const closeModal = document.querySelector('.close-modal');
-    
+
     galleryItems.forEach(item => {
         item.addEventListener('click', function() {
             const imgSrc = this.querySelector('img').getAttribute('src');
@@ -248,46 +243,45 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = 'hidden';
         });
     });
-    
+
     closeModal.addEventListener('click', function() {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
     });
-    
+
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
         }
     });
-    
-    // ========== ORDER SYSTEM ==========
+
+    // ========== ORDER SYSTEM ==========\
     let cart = JSON.parse(localStorage.getItem('vezirCart')) || [];
-    
+
     // Quantity buttons
     document.querySelectorAll('.quantity-btn').forEach(button => {
         button.addEventListener('click', function() {
             const itemId = this.getAttribute('data-item');
             const input = document.querySelector(`.quantity-input[data-item="${itemId}"]`);
             let value = parseInt(input.value) || 0;
-            
+
             if (this.classList.contains('minus')) {
                 value = Math.max(0, value - 1);
-            } else {
-                value++;
+            } else {                value++;
             }
-            
+
             input.value = value;
         });
     });
-    
+
     // Add to cart
     document.querySelectorAll('.add-to-cart').forEach(button => {
         button.addEventListener('click', function() {
             const item = JSON.parse(this.getAttribute('data-item'));
             const quantityInput = document.querySelector(`.quantity-input[data-item="${item.id}"]`);
             const quantity = parseInt(quantityInput.value) || 0;
-            
+
             if (quantity > 0) {
                 addToCart(item, quantity);
                 quantityInput.value = 0;
@@ -295,45 +289,45 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Cart functionality
     function addToCart(item, quantity) {
         const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
-        
+
         if (existingItemIndex >= 0) {
             cart[existingItemIndex].quantity += quantity;
         } else {
             cart.push({
                 ...item,
                 quantity: quantity
-            });
-        }
-        
+            });        }
+
         saveCart();
         updateCartDisplay();
+	console.log(cart);
     }
-    
+
     function removeFromCart(itemId) {
         cart = cart.filter(item => item.id !== itemId);
         saveCart();
         updateCartDisplay();
     }
-    
+
     function saveCart() {
         localStorage.setItem('vezirCart', JSON.stringify(cart));
     }
-    
+
     function updateCartDisplay() {
         const cartItemsContainer = document.querySelector('.cart-items');
         const totalAmountElement = document.querySelector('.total-amount');
         let total = 0;
-        
-        cartItemsContainer.innerHTML = cart.length === 0 
+
+        cartItemsContainer.innerHTML = cart.length === 0
             ? '<div class="empty-cart">Vaša korpa je prazna</div>'
             : cart.map(item => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
-                
+
                 return `
                     <div class="cart-item">
                         <div class="cart-item-name">${item.name}</div>
@@ -345,9 +339,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
             }).join('');
-        
+
         totalAmountElement.textContent = `${total.toFixed(2)} KM`;
-        
         // Add event listeners to remove buttons
         document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', function() {
@@ -355,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Checkout process
     const checkoutBtn = document.querySelector('.checkout-btn');
     const checkoutForm = document.querySelector('.checkout-form');
@@ -418,11 +411,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to send order confirmation email
     function sendOrderConfirmationEmail(orderDetails) {
-        const recipient = 'tarikk.abdijanovic@gmail.com';
-        const subject = 'Nova Narudžba';
-        
+        const recipient = 'tarikk.abdijanvic@gmail.com';
+        const subject = 'Nova Narudžeba';
+
         // Build the email body
-        let body = 'Detalji narudžbe:\n\n';
+        let body = 'Detalji narudžebe:\n\n';
         body += `Ime: ${orderDetails.customer.name}\n`;
         body += `Telefon: ${orderDetails.customer.phone}\n`;
         body += `Adresa: ${orderDetails.customer.address}\n`;
@@ -432,39 +425,37 @@ document.addEventListener('DOMContentLoaded', function() {
           body += `- ${item.name} x ${item.quantity} = ${item.price * item.quantity} KM\n`;
         });
         body += `\nUkupno: ${orderDetails.total}\n`;
-        body += `Datum: ${orderDetails.date}\n`;
-      
-        // Encode for URLs
+        body += `Datum: ${orderDetails.date}\n`;        // Encode for URLs
         const encodedSubject = encodeURIComponent(subject);
         const encodedBody = encodeURIComponent(body);
-      
+
         // ===== 1. Mobile Device Detection =====
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      
+
         if (isMobile) {
           // ===== MOBILE SOLUTION =====
           // Try to open Gmail app directly (works on Android)
           window.location.href = `googlegmail:///co?to=${recipient}&subject=${encodedSubject}&body=${encodedBody}`;
-          
+
           // Fallback 1: If Gmail app isn't installed, open Play Store to install it
           setTimeout(() => {
             if (!document.hidden) {
               window.location.href = `https://play.google.com/store/apps/details?id=com.google.android.gm`;
             }
           }, 500);
-          
+
           // Fallback 2: If all else fails, use regular Gmail web
           setTimeout(() => {
             if (!document.hidden) {
               window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodedSubject}&body=${encodedBody}`;
             }
           }, 1000);
-          
+
         } else {
           // ===== DESKTOP SOLUTION =====
           // Force Gmail in new tab (bypasses Outlook)
           const gmailTab = window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodedSubject}&body=${encodedBody}`, '_blank');
-          
+
           // Fallback if popup blocked
           setTimeout(() => {
             if (!gmailTab || gmailTab.closed) {
@@ -492,20 +483,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 3000);
         }, 100);
     }
-    
-    // ========== SMOOTH SCROLLING ==========
+
+    // ========== SMOOTH SCROLLING ==========\
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
             const targetId = this.getAttribute('href');
             if (targetId === '#') return;
-            
+
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
                 const headerHeight = document.querySelector('.header').offsetHeight;
                 const targetPosition = targetElement.offsetTop - headerHeight;
-                
+
                 window.scrollTo({
                     top: targetPosition,
                     behavior: 'smooth'
@@ -513,32 +504,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // ========== MENU ITEM HOVER IMAGES ==========
+
+    // ========== MENU ITEM HOVER IMAGES ==========\
     document.querySelectorAll('.menu-item-hover').forEach(element => {
         const imageUrl = element.style.getPropertyValue('--item-image');
         if (imageUrl) {
             element.style.setProperty('--hover-image', imageUrl);
         }
     });
-    
+
     // Initialize cart display
     updateCartDisplay();
 
 // Toggle category items visibility
-document.querySelectorAll('.toggle-category').forEach(button => {
-    button.addEventListener('click', function() {
+document.querySelectorAll('.category-header').forEach(header => {
+    header.addEventListener('click', function() {
         const categoryItems = this.closest('.order-category').querySelector('.category-items');
         const isHidden = categoryItems.style.display === 'none';
-        
-        if (isHidden) {
-            categoryItems.style.display = 'block';
-            this.textContent = 'Sakrij';
-        } else {
-            categoryItems.style.display = 'none';
-            this.textContent = 'Prikaži';
-        }
 
+        categoryItems.style.display = isHidden ? 'block' : 'none';
     });
 });
 
@@ -550,16 +534,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.querySelector('.modal');
     const modalImg = document.querySelector('.modal-img');
     const closeModal = document.querySelector('.close-modal');
-    
+
     // Function to check scroll position and update arrow visibility
-    function updateArrowVisibility() {
-        // Hide left arrow if at the start
+    function updateArrowVisibility() {        // Hide left arrow if at the start
         if (gallery.scrollLeft <= 10) {
             scrollLeftBtn.classList.add('hidden');
         } else {
             scrollLeftBtn.classList.remove('hidden');
         }
-        
+
         // Hide right arrow if at the end
         if (gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 10) {
             scrollRightBtn.classList.add('hidden');
@@ -567,10 +550,10 @@ document.addEventListener('DOMContentLoaded', function() {
             scrollRightBtn.classList.remove('hidden');
         }
     }
-    
+
     // Initial check
     updateArrowVisibility();
-    
+
     // Scroll buttons functionality
     scrollLeftBtn.addEventListener('click', () => {
         gallery.scrollBy({
@@ -578,20 +561,20 @@ document.addEventListener('DOMContentLoaded', function() {
             behavior: 'smooth'
         });
     });
-    
+
     scrollRightBtn.addEventListener('click', () => {
         gallery.scrollBy({
             left: 300,
             behavior: 'smooth'
         });
     });
-    
+
     // Update arrows on scroll
     gallery.addEventListener('scroll', updateArrowVisibility);
-    
+
     // Update arrows when window is resized
     window.addEventListener('resize', updateArrowVisibility);
-    
+
     // Modal functionality for gallery images
     const galleryImages = document.querySelectorAll('.gallery img');
     galleryImages.forEach(img => {
@@ -600,18 +583,17 @@ document.addEventListener('DOMContentLoaded', function() {
             modalImg.src = img.src;
         });
     });
-    
+
     closeModal.addEventListener('click', () => {
         modal.style.display = 'none';
     });
-    
+
     // Close modal when clicking outside the image
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+    modal.addEventListener('click', (e) => {        if (e.target === modal) {
             modal.style.display = 'none';
         }
     });
-    
+
     // Keyboard navigation for modal
     document.addEventListener('keydown', (e) => {
         if (modal.style.display === 'flex') {
